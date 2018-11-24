@@ -1,0 +1,15 @@
+#time {
+	background-color: black;
+	color: white;
+	position: fixed;
+	left: 10px;
+	bottom: 10px;
+	padding: 5px;
+	font-size: 22px;
+	text-align: center;
+}
+
+#date {
+	color: rgb(159, 93, 20);
+	font-size: 14px;
+}
