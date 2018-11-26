@@ -7,9 +7,9 @@ class Tables extends React.Component {
       inc: {
         name: props.name,
         value: props.value,
-        recur: props.real,
-        date: "",
-        appt: ""
+        recur: props.recur,
+        date: props.date,
+        appto: props.appt
       }
     }
   }

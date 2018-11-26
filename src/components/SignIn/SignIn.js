@@ -2,16 +2,17 @@ import React from 'react';
 
 class SignIn extends React.Component {
   constructor(props){
-    super();
+    super(props);
     this.state = {
       route: props.route,
       username: '',
-      password: ''
+      password: '',
+      alert: ''
     }
   }
 
   onSubmitSingIn = () => {
-    fetch('http://localhost:3001/cashflow/signin', {
+    fetch('https://kosagyula.duckdns.org/cashflow/signin', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -22,7 +23,10 @@ class SignIn extends React.Component {
       .then(response => response.json())
       .then(user => {
         if (user.id) {
+          this.props.loadUser(user)
           this.props.onRouteChange('summary')
+        } else {
+          this.setState({ alert: user })
         }
       })
   }
@@ -53,7 +57,7 @@ class SignIn extends React.Component {
                 className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
                 type="email"
                 name="email-address"
-                id="email-address" />
+                 />
             </div>
             <div className="mv3">
               <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
@@ -62,7 +66,7 @@ class SignIn extends React.Component {
                 className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
                 type="password"
                 name="password"
-                id="password" />
+                />
             </div>
           </fieldset>
           <div className="">
@@ -79,6 +83,7 @@ class SignIn extends React.Component {
               className="f6 link dim black db pointer">Register</p>
           </div>
         </div>
+        <div className='gold'>{this.state.alert}</div>
       </main>
       </article>
     );

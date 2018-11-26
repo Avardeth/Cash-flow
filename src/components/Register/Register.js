@@ -7,13 +7,14 @@ class Register extends React.Component {
     this.state = {
       route: props.route,
       obj: [],
+      alert: ''
     }
   }
 
   reg = [
     {
       id: 'fullname',
-      name: 'Full name:',
+      name: 'Name:',
       type: 'text'
     },
     {
@@ -85,12 +86,16 @@ class Register extends React.Component {
 
       //register the user datas if everything is fine
       if (isFilled && passcheck){
-        fetch('http://localhost:3001/cashflow/register', {
+        fetch('https://kosagyula.duckdns.org/cashflow/register', {
         method: 'put',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(this.state.obj)
         }).then(response => response.json)
         .then(this.props.onRouteChange('summary'))
+      } else if (isFilled && !passcheck) {
+        this.setState({ alert: 'password not match'})
+      } else {
+        this.setState({ alert: 'please fill out every textfield'})
       }
     })
   }
@@ -105,8 +110,9 @@ class Register extends React.Component {
           <div className='w-20 pa4 center'>
             <input onClick={this.onChange} type='button' value='Submit' />
           </div>
+          <div className='w-40 center'>{this.state.alert}</div>
           <div className='w-40 pa3 center'>
-            <input type='button' value='New household register' />
+            {/*<input type='button' value='New household register' />*/}
           </div>
         </main>
       </article>
