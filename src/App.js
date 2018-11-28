@@ -10,13 +10,7 @@ class App extends Component {
     super();
     this.state = {
       route: 'signin',
-      user: {
-        /*fullname: '',
-        username: '',
-        email: '',
-        household: '',
-        joined: ''*/
-      }
+      user: {}
     }
   }
 

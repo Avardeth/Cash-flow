@@ -1,5 +1,6 @@
 import React from 'react';
 import Registry from './Registry';
+import url from '../url';
 
 class Register extends React.Component {
   constructor(props) {
@@ -86,7 +87,7 @@ class Register extends React.Component {
 
       //register the user datas if everything is fine
       if (isFilled && passcheck){
-        fetch('https://kosagyula.duckdns.org/cashflow/register', {
+        fetch(`${url}/cashflow/register`, {
         method: 'put',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(this.state.obj)

@@ -1,4 +1,5 @@
 import React from 'react';
+import url from '../url';
 
 class SignIn extends React.Component {
   constructor(props){
@@ -12,7 +13,7 @@ class SignIn extends React.Component {
   }
 
   onSubmitSingIn = () => {
-    fetch('https://kosagyula.duckdns.org/cashflow/signin', {
+    fetch(`${url}/cashflow/signin`, {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
