@@ -15,7 +15,7 @@ class Row extends React.Component {
     }
   }
 
-  onrecurChangey = (event) => {
+  onrecurChange = (event) => {
     this.props.onrecurChange(event.value)
   }
 
@@ -29,6 +29,7 @@ class Row extends React.Component {
       .then(response => response.json())
       .then(obj => {
         const recurArray = Array.from(obj.map((user, i) => obj[i].name))
+        recurArray.unshift('Select')
         return recurArray
       })
       .then(names => this.setState({ recurrence: names}))
@@ -37,6 +38,7 @@ class Row extends React.Component {
       .then(response => response.json())
       .then(obj => {
         const array = Array.from(obj.map((user, i) => obj[i].fullname))
+        array.unshift('Select')
         return array
       })
       .then(users => this.setState({ members: users }))
@@ -46,11 +48,15 @@ class Row extends React.Component {
     const { members, recurrence, onNameChange, onValueChange, onSubmit } = this.state;
     return (
       <tr>
-        <td className='pv3 pr3 bb b--black-20'><input onChange={onNameChange} className='tc' type='text' /></td>
-        <td className='pv3 pr3 bb b--black-20'><input onChange={onValueChange} type='text' /></td>
+        <td className='pv3 pr3 bb b--black-20'>
+          <input onChange={onNameChange} value={this.props.name} className='tc' type='text' />
+        </td>
+        <td className='pv3 pr3 bb b--black-20'>
+          <input onChange={onValueChange} value={this.props.value} type='text' />
+        </td>
         <td className='pv3 pr3 bb b--black-20'>
         <Dropdown
-          onChange={this.onrecurChangey}
+          onChange={this.onrecurChange}
           className='f6'
           options={recurrence}
           value={recurrence[0]}

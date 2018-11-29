@@ -43,23 +43,51 @@ class Incomings extends React.Component {
   }
 
   onSubmit = () => {
-    //const { user, t1, valuetypetop,  } = this.state;
+    const { user, t1, valuetypetop,  } = this.state;
 
-    fetch(`${url}/cashflow/update`, {
+    fetch(`${url}/cashflow/updatetable`, {
       method: 'put',
-      header: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        /*name: this.state.t1.name,
+        name: t1.name,
         value: t1.value,
         recurrence: t1.recurValue,
         occupant: t1.occupant,
-        household: user.household,*/
-        name: 2
+        household: user.household,
+        valuetype: valuetypetop
       })
     })
-      //.then(console.log(t1))
       .then(response => response.json())
-      .then(console.log)
+      .then(this.setState({table1:[], t1:{name:'', value:''}}))
+      .then(() => this.tb1())
+      
+  }
+
+  tb1 = () => {
+    fetch(`${url}/cashflow/${this.state.user.household}/${this.state.valuetypetop}`)
+      .then(response => response.json())
+      .then(data => this.setState({ table1: data }))
+  }
+
+  tb2 = () => {
+    fetch(`${url}/cashflow/${this.state.user.household}/${this.state.valuetypebottom}`)
+      .then(response => response.json())
+      .then(data => this.setState({ table2: data }))
+  }
+
+  tableswitch = () => {
+    switch(this.state.rout) {
+      case 'summary': 
+        this.setState({valuetypetop: 2}, () => {
+          this.tb1()
+        })
+        this.setState({valuetypebottom: 4}, () => {
+          this.tb2()
+        })
+        break;
+      
+      default:
+    }
   }
   
   componentDidMount(){
@@ -74,30 +102,14 @@ class Incomings extends React.Component {
       })
       .then(users => this.setState({ members: users}))
 
-    
-    
-
-    switch(this.state.rout) {
-      case 'summary': 
-        this.setState({valuetypetop: 2}, () => {
-          fetch(`${url}/cashflow/${household}/${this.state.valuetypetop}`)
-            .then(response => response.json())
-            .then(data => this.setState({ table1: data }))
-        })
-        this.setState({valuetypebottom: 4}, () => {
-          fetch(`${url}/cashflow/${household}/${this.state.valuetypebottom}`)
-            .then(response => response.json())
-            .then(data => this.setState({ table2: data }))
-        })
-        break;
-      
-      default:
-    }
+    this.tableswitch()
   }
 
   render() {
-    const { user, table1, table2, members } = this.state;
+    const { user, table1, table2, members, t1 } = this.state;
 
+    console.log('render', this.state.t1);
+    
     /*const createRow = () => {
       console.log('ok');
       document.getElementsByClassName('test').innerHTML = <Row />;
@@ -159,10 +171,12 @@ class Incomings extends React.Component {
                   onValueChange={this.onT1ValueChange}
                   onrecurChange={this.onrecurChange}
                   onoccupChange={this.onoccupChange}
-                  //onSubmit={this.onSubmit}
+                  onSubmit={this.onSubmit}
+                  name={t1.name}
+                  value={t1.value}
                 />
                 <tr className='test'>
-                  <td>{<input onClick={this.onSubmit} type='button' value='+'/>}</td>
+                  <td>{/*<input onClick={this.onSubmit} type='button' value='+'/>*/}</td>
                 </tr>
                 <tr>
                   <td className='pv3 pr3 bt'>Sum:</td>
