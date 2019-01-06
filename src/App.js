@@ -1,38 +1,49 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import './App.css';
 import SignIn from './components/SignIn/SignIn';
 import Register from './components/Register/Register';
 import Incomings from './components/Incomings/Incomings';
 //import DateTime from './components/DateTimePalett';
 
-class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      route: 'signin',
-      user: {}
-    }
-  }
+import { onRouteChange, loadUser } from './actions';
 
-  loadUser = (data) => {
+const mapStateToProps = state => {
+  return {
+    route: state.onRouteChange.route,
+    user: state.loadUser.user
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onRouteChange: (route) => dispatch(onRouteChange(route)),
+    loadUser: (data) => dispatch(loadUser(data))
+  }
+}
+
+class App extends Component {
+
+  /*loadUser = (data) => {
     this.setState({ user: data })
   }
 
   onRouteChange = (route) => {
     this.setState({route: route})
-  }
+  }*/
 
   renderSwitch (route){
+    const { onRouteChange, loadUser, user } = this.props;
     switch (route) {
-      case 'signin' : return <SignIn loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>;
-      case 'register': return <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>;
-      case 'summary' : return <Incomings user={this.state.user} />;
+      case 'signin' : return <SignIn loadUser={loadUser} />;
+      case 'register': return <Register loadUser={loadUser} onRouteChange={onRouteChange}/>;
+      case 'summary' : return <Incomings user={user} />;
       default:
     }
   }
 
   render() {
-    const { route } = this.state;
+    const { route } = this.props;
     return (
       <div className='App'>
         {this.renderSwitch(route)}
@@ -42,4 +53,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);

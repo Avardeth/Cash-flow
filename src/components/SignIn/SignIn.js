@@ -1,13 +1,29 @@
 import React from 'react';
 import url from '../url';
+import { connect } from 'react-redux';
+import { setNameField, setPasswordField } from './actions';
+import { onRouteChange } from '../../actions'
+
+const mapStateToProps = state => {
+  return {
+    username: state.valueChange.username,
+    password: state.valueChange.password
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onUserChange: (event) => dispatch(setNameField(event.target.value)),
+    onPasswordChange: (event) => dispatch(setPasswordField(event.target.value)),
+    onRouteChange: (route) => dispatch(onRouteChange(route))
+  }
+}
 
 class SignIn extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      route: props.route,
-      username: '',
-      password: '',
+      
       alert: ''
     }
   }
@@ -17,8 +33,8 @@ class SignIn extends React.Component {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        username: this.state.username,
-        password: this.state.password
+        username: this.props.username,
+        password: this.props.password
       })
     })
       .then(response => response.json())
@@ -32,19 +48,13 @@ class SignIn extends React.Component {
       })
   }
 
-  onUserChange = (event) => {
-    this.setState({ username: event.target.value })
-  }
-
-  onPasswordChange = (event) => {
-    this.setState({ password: event.target.value })
-  }
-
+  
   onRegister = () => {
     this.props.onRouteChange('register');
   }
-
+  
   render() {
+    const { onUserChange, onPasswordChange } = this.props;
     return (
       <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center">
       <main className="pa4 black-80">
@@ -54,7 +64,7 @@ class SignIn extends React.Component {
             <div className="mt3">
               <label className="db fw6 lh-copy f6" htmlFor="email-address">Username</label>
               <input
-                onChange={this.onUserChange}
+                onChange={onUserChange}
                 className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
                 type="email"
                 name="email-address"
@@ -63,7 +73,7 @@ class SignIn extends React.Component {
             <div className="mv3">
               <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
               <input
-                onChange={this.onPasswordChange}
+                onChange={onPasswordChange}
                 className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
                 type="password"
                 name="password"
@@ -91,4 +101,4 @@ class SignIn extends React.Component {
   }
 }
 
-export default SignIn;
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn);
