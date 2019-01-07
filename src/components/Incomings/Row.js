@@ -1,32 +1,41 @@
 import React from 'react';
 import url from '../url';
 import Dropdown from 'react-dropdown';
+import { connect } from 'react-redux';
+import { setNameField, setValueField, setRecurrenceField, setOccupantField } from './actions';
+
+const mapStateToProps = state => {
+  return {
+    user: state.loadUser.user,
+    name: state.setValues.name,
+    value: state.setValues.value,
+    recur: state.setValues.recur,
+    occup: state.setValues.occup
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onNameChange: (event) => dispatch(setNameField(event.target.value)),
+    onValueChange: (event) => dispatch(setValueField(event.target.value)),
+    onrecurChange: (event) => dispatch(setRecurrenceField(event.value)),
+    onoccupChange: (event) => dispatch(setOccupantField(event.value))
+  }
+}
 
 class Row extends React.Component {
   constructor(props){
     super();
     this.state = {
-      user: props.user,
+      
       members: [],
       recurrence: [],
-      onNameChange: props.onNameChange,
-      onValueChange: props.onValueChange,
       onSubmit: props.onSubmit
     }
   }
 
-  onrecurChange = (event) => {
-    this.props.onrecurChange(event.value)
-    this.setState({valRecur: event.value})
-  }
-
-  onoccupChange = (event) => {
-    this.props.onoccupChange(event.value)
-    this.setState({valMember: event.value})
-  }
-
   componentDidMount(){
-    const { household } = this.state.user;
+    const { household } = this.props.user;
     fetch(`${url}/cashflow/recur`)
       .then(response => response.json())
       .then(obj => Array.from(obj.map((user, i) => obj[i].name)))
@@ -39,31 +48,32 @@ class Row extends React.Component {
   }
 
   render() {
-    const { members, recurrence, onNameChange, onValueChange, onSubmit } = this.state;
+    const { members, recurrence, onSubmit } = this.state;
+    const { name, value, recur, occup, onNameChange, onValueChange, onrecurChange, onoccupChange } = this.props;
     return (
       <tr>
         <td className='pv3 pr3 bb b--black-20'>
-          <input onChange={onNameChange} value={this.props.t1.name} className='tc' type='text' />
+          <input onChange={onNameChange} value={name} className='tc' type='text' />
         </td>
         <td className='pv3 pr3 bb b--black-20'>
-          <input onChange={onValueChange} value={this.props.t1.value} type='text' />
+          <input onChange={onValueChange} value={value} type='text' />
         </td>
         <td className='pv3 pr3 bb b--black-20'>
         <Dropdown
-          onChange={this.onrecurChange}
+          onChange={onrecurChange}
           className='f6'
           options={recurrence}
-          value={this.props.t1.recurValue}
-          placeholder=''
+          value={recur}
+          placeholder='Select'
         />
         </td>
         <td className='pv3 pr3 bb b--black-20'>
         <Dropdown
-          onChange={this.onoccupChange}
+          onChange={onoccupChange}
           className='f6'
           options={members}
-          value={this.props.t1.occupant}
-          placeholder=''
+          value={occup}
+          placeholder='Select'
         /></td>
         <td className='pv3 pr3 bb b--black-20'><input onClick={onSubmit} type='submit' value='Submit' /></td>
       </tr>
@@ -71,4 +81,4 @@ class Row extends React.Component {
   }
 }
 
-export default Row;
+export default connect(mapStateToProps, mapDispatchToProps)(Row);

@@ -24,20 +24,12 @@ const mapDispatchToProps = (dispatch) => {
 
 class App extends Component {
 
-  /*loadUser = (data) => {
-    this.setState({ user: data })
-  }
-
-  onRouteChange = (route) => {
-    this.setState({route: route})
-  }*/
-
   renderSwitch (route){
-    const { onRouteChange, loadUser, user } = this.props;
+    const { onRouteChange, loadUser } = this.props;
     switch (route) {
-      case 'signin' : return <SignIn loadUser={loadUser} />;
+      case 'signin' : return <SignIn />;
       case 'register': return <Register loadUser={loadUser} onRouteChange={onRouteChange}/>;
-      case 'summary' : return <Incomings user={user} />;
+      case 'summary' : return <Incomings />;
       default:
     }
   }

@@ -1,12 +1,19 @@
 import React from 'react';
 import Registry from './Registry';
 import url from '../url';
+import { connect } from 'react-redux';
+
+const mapStateToProps = state => {
+  return {
+    route: state.onRouteChange.route
+  }
+}
 
 class Register extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      route: props.route,
+      //route: props.route,
       obj: [],
       alert: ''
     }
@@ -121,4 +128,4 @@ class Register extends React.Component {
   }
 }
 
-export default Register;
+export default connect(mapStateToProps)(Register);

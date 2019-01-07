@@ -1,60 +1,33 @@
 import React from 'react';
-import url from '../url';
 import { connect } from 'react-redux';
-import { setNameField, setPasswordField } from './actions';
+import { setUsernameField, setPasswordField, onSubmitSignIn } from './actions';
 import { onRouteChange } from '../../actions'
 
 const mapStateToProps = state => {
   return {
     username: state.valueChange.username,
-    password: state.valueChange.password
+    password: state.valueChange.password,
+    alert: state.setAlert.alert
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onUserChange: (event) => dispatch(setNameField(event.target.value)),
+    onUserChange: (event) => dispatch(setUsernameField(event.target.value)),
     onPasswordChange: (event) => dispatch(setPasswordField(event.target.value)),
-    onRouteChange: (route) => dispatch(onRouteChange(route))
+    onRouteChange: (route) => dispatch(onRouteChange(route)),
+    onSubmitSignIn: () => dispatch(onSubmitSignIn())
   }
 }
 
 class SignIn extends React.Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      
-      alert: ''
-    }
-  }
-
-  onSubmitSingIn = () => {
-    fetch(`${url}/cashflow/signin`, {
-      method: 'post',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        username: this.props.username,
-        password: this.props.password
-      })
-    })
-      .then(response => response.json())
-      .then(user => {
-        if (user.id) {
-          this.props.loadUser(user)
-          this.props.onRouteChange('summary')
-        } else {
-          this.setState({ alert: user })
-        }
-      })
-  }
-
   
   onRegister = () => {
     this.props.onRouteChange('register');
   }
   
   render() {
-    const { onUserChange, onPasswordChange } = this.props;
+    const { onUserChange, onPasswordChange, alert, onSubmitSignIn } = this.props;
     return (
       <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center">
       <main className="pa4 black-80">
@@ -82,7 +55,7 @@ class SignIn extends React.Component {
           </fieldset>
           <div className="">
             <input
-            onClick={this.onSubmitSingIn}
+            onClick={onSubmitSignIn}
             className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib"
             type="submit"
             value="Sign in"
@@ -94,7 +67,7 @@ class SignIn extends React.Component {
               className="f6 link dim black db pointer">Register</p>
           </div>
         </div>
-        <div className='gold'>{this.state.alert}</div>
+        <div className='gold'>{alert}</div>
       </main>
       </article>
     );

@@ -5,53 +5,49 @@ import Tables from './Tables';
 import Row from './Row';
 import './style.css';
 import url from '../url';
+import { connect } from 'react-redux';
+import { fetchMembers, fetchTables, setValueType } from './actions';
+
+const mapStateToProps = state => {
+  return {
+    user: state.loadUser.user,
+    route: state.onRouteChange.route,
+    members: state.setMembers.members,
+    table: state.setTables.tabletop
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchMembers: (array) => dispatch(fetchMembers(array)),
+    fetchTables: () => dispatch(fetchTables()),
+    setValueTypeTop: (num) => dispatch(setValueType(num))
+  }
+}
 
 class Incomings extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: props.user,
       table1: [],
       table2: [],
-      rout: 'summary',
       members: [],
       valuetypetop: '',
       valuetypebottom: '',
-      t1: {
-        name: '',
-        value: '',
-        recurValue: 'Select',
-        occupant: 'Select'
-      },
       retval: '',
       rowActive: false
     }
     this.tb = this.tb.bind(this);
   }
 
-  onT1NameChange = (event) => {
-    this.setState(Object.assign(this.state.t1, {name: event.target.value}))
-  }
-
-  onT1ValueChange = (event) => {
-    this.setState(Object.assign(this.state.t1, {value: parseInt(event.target.value)}))
-  }
-
-  onrecurChange = (recurValue) => {
-    this.setState(Object.assign(this.state.t1, {recurValue}))
-  }
-
-  onoccupChange = (occupant) => {
-    this.setState(Object.assign(this.state.t1, {occupant}))
-  }
-
+ 
   onClick = () => {
     this.setState({rowActive: true})
   }
 
 
   onSubmit = (t, valuetype) => {
-    const { user } = this.state;
+    const { user } = this.props;
     
     return fetch(`${url}/cashflow/updatetable`, {
       method: 'put',
@@ -69,12 +65,12 @@ class Incomings extends React.Component {
   }
 
   tb = (valuetype) => {
-    return fetch(`${url}/cashflow/${this.state.user.household}/${valuetype}`)
-      .then(response => response.json())   
+    return fetch(`${url}/cashflow/${this.props.user.household}/${valuetype}`)
+      .then(response => response.json())
   }
 
   tableswitch = () => {
-    switch(this.state.rout) {
+    switch(this.props.route) {
       case 'summary': 
         this.setState({valuetypetop: 2}, () => {
           this.tb(this.state.valuetypetop).then(data=>this.setState({table1: data}))
@@ -89,18 +85,9 @@ class Incomings extends React.Component {
   }
   
   componentDidMount(){
-    const { household } = this.state.user;
-
-    fetch(`${url}/cashflow/members/${household}`)
-      .then(response => response.json())
-      .then(obj => {
-        const array = Array.from(obj.map((user, i) => obj[i].fullname))
-        array.unshift('Summary')
-        return array
-      })
-      .then(users => this.setState({ members: users}))
-
-    this.tableswitch()
+    this.props.fetchMembers()
+    this.props.setValueType(2)
+    this.props.fetchTables()
   }
 
   tables = (table) => {
@@ -117,11 +104,13 @@ class Incomings extends React.Component {
   }
 
   render() {
-    const { user, table1, table2, members, t1, rowActive } = this.state;
+    const { table1, table2, t1, rowActive } = this.state;
+    const { user, members, table } = this.props;
 
-    const tableTop = this.tables(table1)
+    
+    const tableTop = this.tables(table)
 
-    const tableBottom = this.tables(table2)
+    const tableBottom = [] //= this.tables(table2)
 
     /*const sum = table1.map((user, i) => table1[i].value)
                 .reduce((acc, value) => acc + value)
@@ -152,12 +141,6 @@ class Incomings extends React.Component {
               <tbody>
                 {tableTop ? tableTop : <tr>Loading</tr>}
                 <Row 
-                  user={user} 
-                  t1={t1}
-                  onNameChange={this.onT1NameChange} 
-                  onValueChange={this.onT1ValueChange}
-                  onrecurChange={this.onrecurChange}
-                  onoccupChange={this.onoccupChange}
                   onSubmit={() => {
                     this.onSubmit(t1, this.state.valuetypetop)
                       .then(this.setState({table1:[], t1:{name:'', value:'', recurValue:'Select', occupant:'Select'}}))
@@ -201,4 +184,4 @@ class Incomings extends React.Component {
   }
 }
 
-export default Incomings;
+export default connect(mapStateToProps, mapDispatchToProps)(Incomings);
