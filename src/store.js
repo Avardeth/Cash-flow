@@ -3,7 +3,9 @@ import { createLogger } from 'redux-logger';
 import  thunkMiddleware  from 'redux-thunk';
 import { valueChange, setAlert } from './components/SignIn/reducers';
 import { onRouteChange, loadUser } from './reducers';
-import { setValues, setMembers, setTables, setValueType } from './components/Incomings/reducers';
+import {
+    setValues, setMembers, setTables, setTableType, setRecurrence, setOccupant
+} from './components/Incomings/reducers';
 
 const logger = createLogger();
 const rootReducer = combineReducers({ 
@@ -14,6 +16,8 @@ const rootReducer = combineReducers({
     setValues,
     setMembers,
     setTables,
-    setValueType
+    setTableType,
+    setRecurrence,
+    setOccupant
 });
 export const store = createStore(rootReducer, applyMiddleware(thunkMiddleware, logger));
